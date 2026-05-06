@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>About James Robinson</title>
+
+<style>
+
+:root{
+  --bg:#0f1117;
+  --panel:#171a23;
+  --border:#2b3140;
+  --text:#f3f4f6;
+  --muted:#b7bcc9;
+  --accent:#7ec850;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+.page{
+  max-width:1150px;
+  margin:0 auto;
+  padding:70px 24px 120px;
+}
+
+.nav{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:50px;
+}
+
+.nav a{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:700;
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:26px;
+  padding:38px;
+  box-shadow:0 10px 40px rgba(0,0,0,.28);
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:42px;
+  align-items:start;
+}
+
+.photo{
+  width:100%;
+  border-radius:22px;
+  border:1px solid var(--border);
+  display:block;
+}
+
+.label{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  font-size:.8rem;
+  margin-bottom:12px;
+}
+
+h1{
+  font-size:clamp(2.6rem,7vw,5rem);
+  line-height:.95;
+  margin:0 0 24px;
+  letter-spacing:-0.06em;
+}
+
+p{
+  color:var(--muted);
+  line-height:1.8;
+  font-size:1.08rem;
+  margin:0 0 18px;
+}
+
+.links{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-top:30px;
+}
+
+.button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px 18px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:700;
+  transition:.2s ease;
+}
+
+.button.primary{
+  background:var(--accent);
+  color:#10130d;
+}
+
+.button.secondary{
+  border:1px solid var(--border);
+  color:var(--text);
+  background:#11141c;
+}
+
+.button:hover{
+  transform:translateY(-2px);
+}
+
+@media(max-width:800px){
+  .card{
+    grid-template-columns:1fr;
+    padding:26px;
+  }
+
+  .photo{
+    max-width:280px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<main class="page">
+
+  <nav class="nav">
+    <a href="index.html">← Home</a>
+    <a href="contact.html">Contact</a>
+    <a href="morel-compass.html">Morel Compass</a>
+  </nav>
+
+  <section class="card">
+
+    <img
+      class="photo"
+      src="jamesRobinson.jpg"
+      alt="James Robinson">
+
+    <div>
+
+      <div class="label">
+        About Me
+      </div>
+
+      <h1>
+        James Robinson
+      </h1>
+
+      <p>
+        I am a recent graduate of Seattle University, where I earned a
+        master’s degree in software engineering. I am currently looking for
+        opportunities in software engineering, data science, data engineering,
+        GIS, satellite data, and related technical areas where I can build
+        useful, reliable, and data-driven systems.
+      </p>
+
+      <p>
+        My path into data started through language. I graduated from the
+        University of Washington with a double major in Japanese and Chinese
+        linguistics. Studying language systems gave me an early interest in
+        structure, patterns, classification, and meaning — ideas that naturally
+        led me toward programming, data analysis, and computational approaches
+        to real-world problems.
+      </p>
+
+      <p>
+        After that, I completed programming and data-focused coursework through
+        Udacity, and later participated in a data engineering program through
+        Insight Data Science. Those experiences helped me connect software
+        engineering with larger-scale data workflows, cloud-based processing,
+        and practical analytics systems.
+      </p>
+
+      <p>
+        My current work focuses on geospatial processing, environmental
+        prediction, machine learning, GIS, satellite-derived datasets, and
+        interactive visualization. I am especially interested in projects that
+        combine software, data, maps, and real-world environmental systems, but
+        I am also open to broader software and data roles where these skills
+        can be useful.
+      </p>
+
+      <div class="links">
+
+        <a class="button primary" href="James_2026_resume.pdf" target="_blank">
+          Resume PDF
+        </a>
+
+        <a class="button secondary" href="https://github.com/Tecknique" target="_blank">
+          GitHub
+        </a>
+
+        <a class="button secondary" href="contact.html">
+          Contact Me
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+</body>
+</html>
