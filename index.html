@@ -8,7 +8,6 @@
 <title>James Robinson</title>
 
 <style>
-
 :root{
   --bg:#0f1117;
   --panel:#171a23;
@@ -18,41 +17,25 @@
   --accent:#7ec850;
 }
 
-*{
-  box-sizing:border-box;
-}
+*{ box-sizing:border-box; }
 
-html{
-  scroll-behavior:smooth;
-}
+html{ scroll-behavior:smooth; }
 
 body{
   margin:0;
   background:var(--bg);
   color:var(--text);
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-}
-
-a{
-  color:inherit;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
 .page{
-  max-width:1300px;
+  max-width:1200px;
   margin:auto;
   padding:70px 24px 120px;
 }
 
 .hero{
-  min-height:45vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
+  margin-bottom:70px;
 }
 
 .hero-label{
@@ -64,10 +47,10 @@ a{
 }
 
 .hero h1{
-  font-size:clamp(3.5rem,10vw,8rem);
-  line-height:.92;
+  font-size:clamp(2.8rem,8vw,6.5rem);
+  line-height:.96;
   margin:0 0 24px;
-  letter-spacing:-0.07em;
+  letter-spacing:-0.06em;
 }
 
 .hero p{
@@ -77,8 +60,20 @@ a{
   font-size:1.15rem;
 }
 
-.projects{
-  margin-top:80px;
+.skills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:26px;
+}
+
+.pill{
+  border:1px solid var(--border);
+  background:#171b25;
+  color:#d7dbeb;
+  border-radius:999px;
+  padding:8px 13px;
+  font-size:.9rem;
 }
 
 .project-card{
@@ -86,8 +81,7 @@ a{
   border:1px solid var(--border);
   border-radius:26px;
   padding:36px;
-  box-shadow:
-    0 10px 40px rgba(0,0,0,.28);
+  box-shadow:0 10px 40px rgba(0,0,0,.28);
 }
 
 .project-tag{
@@ -123,7 +117,6 @@ a{
 .project-button{
   display:inline-flex;
   align-items:center;
-  gap:10px;
   padding:14px 18px;
   border-radius:14px;
   text-decoration:none;
@@ -173,23 +166,16 @@ a{
   right:0;
   top:40%;
   z-index:9999;
-
   writing-mode:vertical-rl;
   transform:rotate(180deg);
-
   background:var(--accent);
   color:#10130d;
-
   padding:16px 12px;
-
   border-radius:14px 0 0 14px;
-
   text-decoration:none;
   font-weight:800;
   letter-spacing:.03em;
-
-  box-shadow:
-    0 8px 28px rgba(0,0,0,.35);
+  box-shadow:0 8px 28px rgba(0,0,0,.35);
 }
 
 .footer{
@@ -199,33 +185,20 @@ a{
 }
 
 @media(max-width:900px){
-
-  .page{
-    padding:44px 16px 80px;
-  }
-
-  .project-card{
-    padding:24px;
-  }
-
+  .page{ padding:44px 16px 80px; }
+  .project-card{ padding:24px; }
   .project-frame{
     height:70vh;
     min-height:500px;
   }
-
 }
-
 </style>
 </head>
 
 <body>
 
-<a
-  class="side-tab"
-  href="morel-compass.html">
-
+<a class="side-tab" href="morel-compass.html">
   Morel Compass
-
 </a>
 
 <main class="page">
@@ -237,95 +210,84 @@ a{
   </div>
 
   <h1>
-    Computational<br/>
-    Systems &<br/>
-    Environmental<br/>
-    Intelligence
+    Software engineering,
+    data systems,
+    and geospatial analysis.
   </h1>
 
   <p>
-    Software engineering, large-scale geospatial processing,
-    machine learning infrastructure, environmental prediction systems,
-    interactive visualization, computational art,
-    and data-driven spatial analysis.
+    I am a recent graduate of Seattle University, where I earned a master’s
+    degree in software engineering. My strongest interests are in data science,
+    data engineering, GIS, satellite data, environmental modeling, and
+    interactive visualization, but I am broadly interested in software roles
+    where I can build useful, reliable, and data-driven systems.
   </p>
+
+  <div class="skills">
+    <span class="pill">Software Engineering</span>
+    <span class="pill">Data Science</span>
+    <span class="pill">Data Engineering</span>
+    <span class="pill">GIS</span>
+    <span class="pill">Satellite Data</span>
+    <span class="pill">Machine Learning</span>
+    <span class="pill">Python</span>
+    <span class="pill">Interactive Visualization</span>
+  </div>
 
 </section>
 
-<section class="projects">
+<section class="project-card">
 
-  <div class="project-card">
+  <div class="project-tag">
+    Project Currently Working On
+  </div>
 
-    <div class="project-tag">
-      Project Currently Working On
-    </div>
+  <h2>
+    Morel Compass
+  </h2>
 
-    <h2>
-      Morel Compass
-    </h2>
+  <p>
+    Morel Compass is a predictive mushroom habitat mapping system that combines
+    terrain analysis, wildfire history, National Water Model variables,
+    satellite vegetation indices, environmental feature engineering, and machine
+    learning inference to estimate likely mushroom emergence conditions.
+  </p>
 
-    <p>
-      Morel Compass is a predictive mushroom habitat mapping system
-      that combines terrain analysis, wildfire history,
-      National Water Model variables, satellite vegetation indices,
-      environmental feature engineering,
-      and machine learning inference to estimate likely mushroom emergence conditions.
-    </p>
+  <p>
+    The embedded visualization below is a static example export from the
+    current Washington State prediction environment. The full project is built
+    around a larger dynamic Python workflow for processing environmental data,
+    generating prediction layers, and exploring species-specific habitat models.
+  </p>
 
-    <p>
-      The embedded visualization below is a static export example
-      from the current Washington State prediction environment.
-      The full project operates as a dynamic Python-based system
-      capable of much larger environmental datasets,
-      temporal prediction layers,
-      and multi-species habitat inference.
-    </p>
+  <div class="project-links">
+    <a class="project-button primary" href="morel-compass.html">
+      Open Full Visualization →
+    </a>
 
-    <div class="project-links">
+    <a class="project-button secondary" href="https://github.com/tecknique" target="_blank">
+      GitHub
+    </a>
+  </div>
 
-      <a
-        class="project-button primary"
-        href="morel-compass.html">
+  <div class="map-shell">
+    <iframe
+      class="project-frame"
+      src="morel-compass.html"
+      loading="lazy"
+      title="Morel Compass Washington State map">
+    </iframe>
+  </div>
 
-        Open Full Visualization →
-
-      </a>
-
-      <a
-        class="project-button secondary"
-        href="https://github.com/tecknique"
-        target="_blank">
-
-        GitHub
-
-      </a>
-
-    </div>
-
-    <div class="map-shell">
-
-      <iframe
-        class="project-frame"
-        src="morel-compass.html"
-        loading="lazy"
-        title="Morel Compass Washington State map">
-      </iframe>
-
-    </div>
-
-    <div class="caption">
-      Static GitHub Pages export of the Morel Compass prediction system.
-      Current visualization focused on Washington State.
-    </div>
-
+  <div class="caption">
+    Static GitHub Pages export of the Morel Compass prediction system.
+    Current visualization focused on Washington State.
   </div>
 
 </section>
 
 <footer class="footer">
-
   © James Robinson
-
 </footer>
 
 </main>
