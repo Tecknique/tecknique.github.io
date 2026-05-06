@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Contact James Robinson</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<style>
+
+:root{
+  --bg:#0f1117;
+  --panel:#171a23;
+  --border:#2b3140;
+  --text:#f3f4f6;
+  --muted:#b7bcc9;
+  --accent:#7ec850;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+.page{
+  max-width:1150px;
+  margin:0 auto;
+  padding:70px 24px 120px;
+}
+
+.nav{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:50px;
+}
+
+.nav a{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:700;
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:26px;
+  padding:38px;
+  box-shadow:0 10px 40px rgba(0,0,0,.28);
+}
+
+.label{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  font-size:.8rem;
+  margin-bottom:12px;
+}
+
+h1{
+  font-size:clamp(2.6rem,7vw,5rem);
+  line-height:.95;
+  margin:0 0 24px;
+  letter-spacing:-0.06em;
+}
+
+p{
+  color:var(--muted);
+  line-height:1.8;
+  font-size:1.08rem;
+  margin:0 0 18px;
+  max-width:850px;
+}
+
+.contact-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  margin-top:34px;
+}
+
+.contact-box{
+  background:#11141c;
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:24px;
+}
+
+.contact-box h2{
+  margin:0 0 10px;
+  color:var(--text);
+  font-size:1.25rem;
+}
+
+.contact-box a,
+.contact-box span{
+  color:var(--accent);
+  text-decoration:none;
+  font-size:1.1rem;
+  font-weight:700;
+}
+
+.map-wrap{
+  margin-top:28px;
+  border:1px solid var(--border);
+  border-radius:22px;
+  overflow:hidden;
+  background:#0c0d12;
+}
+
+#map{
+  width:100%;
+  height:460px;
+}
+
+.links{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-top:30px;
+}
+
+.button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px 18px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:700;
+  transition:.2s ease;
+}
+
+.button.primary{
+  background:var(--accent);
+  color:#10130d;
+}
+
+.button.secondary{
+  border:1px solid var(--border);
+  color:var(--text);
+  background:#11141c;
+}
+
+.button:hover{
+  transform:translateY(-2px);
+}
+
+@media(max-width:800px){
+  .card{
+    padding:26px;
+  }
+
+  .contact-grid{
+    grid-template-columns:1fr;
+  }
+
+  #map{
+    height:360px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<main class="page">
+
+  <nav class="nav">
+    <a href="index.html">← Home</a>
+    <a href="about.html">About</a>
+    <a href="morel-compass.html">Morel Compass</a>
+  </nav>
+
+  <section class="card">
+
+    <div class="label">
+      Contact Me
+    </div>
+
+    <h1>
+      Let’s connect.
+    </h1>
+
+    <p>
+      I am currently looking for opportunities in software engineering,
+      data science, data engineering, GIS, satellite data, and related
+      technical fields. I am based in Lake Forest Park, Washington,
+      near Seattle.
+    </p>
+
+    <div class="contact-grid">
+
+      <div class="contact-box">
+        <h2>Email</h2>
+        <a href="mailto:james.15.robinson@gmail.com">
+          james.15.robinson@gmail.com
+        </a>
+      </div>
+
+      <div class="contact-box">
+        <h2>Phone</h2>
+        <a href="tel:2063967727">
+          206-396-7727
+        </a>
+      </div>
+
+      <div class="contact-box">
+        <h2>Location</h2>
+        <span>Lake Forest Park, Washington</span>
+      </div>
+
+      <div class="contact-box">
+        <h2>GitHub</h2>
+        <a href="https://github.com/Tecknique" target="_blank">
+          github.com/Tecknique
+        </a>
+      </div>
+
+    </div>
+
+    <div class="map-wrap">
+      <div id="map"></div>
+    </div>
+
+    <div class="links">
+
+      <a class="button primary" href="James_2026_resume.pdf" target="_blank">
+        Resume PDF
+      </a>
+
+      <a class="button secondary" href="about.html">
+        About Me
+      </a>
+
+      <a class="button secondary" href="index.html">
+        Home
+      </a>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+
+const lakeForestPark = [47.7568, -122.2809];
+
+const map = L.map('map').setView(lakeForestPark, 12);
+
+L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 18
+  }
+).addTo(map);
+
+L.marker(lakeForestPark)
+  .addTo(map)
+  .bindPopup('<b>Lake Forest Park, WA</b><br/>Greater Seattle area')
+  .openPopup();
+
+setTimeout(() => {
+  map.invalidateSize();
+}, 250);
+
+</script>
+
+</body>
+</html>
