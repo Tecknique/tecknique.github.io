@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LFA Image Analysis GUI</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.min.js"></script>
+
+<style>
+:root {
+  --bg:#0f1117;
+  --panel:#171a23;
+  --panel2:#11141c;
+  --border:#2b3140;
+  --text:#f3f4f6;
+  --muted:#b7bcc9;
+  --accent:#7ec850;
+  --danger:#ef476f;
+  --warn:#ffd166;
+  --blue:#4ea8de;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+.page {
+  max-width:1500px;
+  margin:0 auto;
+  padding:42px 28px 70px;
+}
+
+.hero { margin-bottom:28px; }
+
+.hero h1 {
+  font-size:clamp(2.2rem, 6vw, 5rem);
+  line-height:.95;
+  margin:0 0 16px;
+  letter-spacing:-.06em;
+}
+
+.hero p {
+  max-width:980px;
+  color:var(--muted);
+  font-size:1.08rem;
+  line-height:1.65;
+}
+
+.pills { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+.pill {
+  border:1px solid var(--border);
+  background:#171b25;
+  color:#d7dbeb;
+  border-radius:999px;
+  padding:8px 13px;
+  font-size:.86rem;
+}
+
+.app {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 10px 40px rgba(0,0,0,.3);
+}
+
+.toolbar {
+  padding:16px;
+  border-bottom:1px solid var(--border);
+  background:#0d0f16;
+}
+
+.toolbar-title {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:14px;
+}
+
+.toolbar-title h2 {
+  margin:0;
+  color:var(--accent);
+  font-size:1.15rem;
+}
+
+.toolbar-title span {
+  display:block;
+  color:#8e94a8;
+  font-size:.78rem;
+  margin-top:3px;
+}
+
+#status {
+  color:var(--accent);
+  font-size:.8rem;
+  text-align:right;
+  line-height:1.35;
+  max-width:440px;
+}
+
+.controls {
+  display:grid;
+  grid-template-columns: 1.2fr 1.2fr .8fr .8fr .8fr .8fr;
+  gap:12px;
+  align-items:end;
+}
+
+.ctrl { display:flex; flex-direction:column; gap:6px; }
+.ctrl label {
+  color:#8e94a8;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-size:.67rem;
+}
+
+select,input,button,textarea {
+  font:inherit;
+}
+
+select,input[type="text"],input[type="number"],button,textarea {
+  background:#1b1f2b;
+  color:var(--text);
+  border:1px solid #3a4255;
+  border-radius:9px;
+  padding:9px 10px;
+}
+
+select, input[type="text"] { height:40px; }
+
+button {
+  cursor:pointer;
+  font-weight:700;
+  transition:.15s ease;
+}
+button:hover { transform:translateY(-1px); }
+button.primary { background:var(--accent); color:#10130d; border-color:var(--accent); }
+button.secondary { background:#11141c; }
+button.danger { background:#27151c; border-color:#553040; color:#ffb3c6; }
+
+.button-row { display:flex; gap:8px; flex-wrap:wrap; }
+.button-row button { flex:1; min-width:90px; }
+
+.main-grid {
+  display:grid;
+  grid-template-columns:minmax(0, 1.25fr) minmax(330px, .75fr);
+  gap:16px;
+  padding:16px;
+}
+
+.canvas-panel,.side-panel,.analysis-panel {
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:14px;
+}
+
+.canvas-wrap {
+  position:relative;
+  width:100%;
+  height:680px;
+  background:#080a0f;
+  border:1px solid #252b39;
+  border-radius:14px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+canvas#imageCanvas {
+  max-width:100%;
+  max-height:100%;
+  image-rendering:auto;
+  cursor:crosshair;
+}
+
+.side-panel h3,.analysis-panel h3 {
+  margin:0 0 10px;
+  color:var(--accent);
+  font-size:1rem;
+}
+
+.log {
+  margin-top:12px;
+  height:110px;
+  overflow:auto;
+  background:#090b10;
+  border:1px solid #252b39;
+  border-radius:12px;
+  padding:10px;
+  color:#aeb6c9;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.78rem;
+  white-space:pre-wrap;
+}
+
+.info-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+
+.info-card {
+  background:#0d1018;
+  border:1px solid #252b39;
+  border-radius:12px;
+  padding:10px;
+  color:#b9c0d0;
+  font-size:.82rem;
+}
+.info-card b { color:#fff; display:block; margin-bottom:3px; }
+
+.tabs {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:0 16px 16px;
+}
+.tabbtn {
+  background:#11141c;
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:999px;
+  padding:8px 13px;
+}
+.tabbtn.active { background:var(--accent); color:#10130d; border-color:var(--accent); }
+
+.analysis-area { padding:0 16px 16px; }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+.roi-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(150px,1fr));
+  gap:12px;
+}
+.roi-card {
+  background:#0d1018;
+  border:1px solid #252b39;
+  border-radius:14px;
+  padding:10px;
+}
+.roi-card img { width:100%; border-radius:8px; background:#000; }
+.roi-card small { color:#99a1b5; display:block; margin-top:6px; line-height:1.35; }
+
+.chart-box {
+  background:#0d1018;
+  border:1px solid #252b39;
+  border-radius:14px;
+  padding:12px;
+  height:390px;
+}
+
+.table-wrap { overflow:auto; max-height:420px; border:1px solid #252b39; border-radius:14px; }
+table { border-collapse:collapse; width:100%; min-width:720px; }
+th,td { padding:9px 10px; border-bottom:1px solid #252b39; text-align:left; font-size:.85rem; }
+th { color:#7ec850; background:#0d1018; position:sticky; top:0; }
+td { color:#cbd2e4; }
+
+.notice {
+  color:#9aa4b8;
+  line-height:1.6;
+  font-size:.92rem;
+}
+
+.footer-note {
+  margin-top:26px;
+  color:#8e94a8;
+  line-height:1.6;
+}
+
+@media (max-width:1100px) {
+  .controls { grid-template-columns:1fr 1fr; }
+  .main-grid { grid-template-columns:1fr; }
+  .canvas-wrap { height:560px; }
+  #status { text-align:left; }
+  .toolbar-title { flex-direction:column; }
+}
+@media (max-width:700px) {
+  .page { padding:28px 14px 50px; }
+  .controls { grid-template-columns:1fr; }
+  .canvas-wrap { height:430px; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+<section class="hero">
+  <h1>LFA Image Analysis GUI</h1>
+  <p>
+    A browser-based static HTML version of the lateral flow assay image analysis interface.
+    It loads assay images from GitHub, lets users select regions of interest, applies basic
+    grayscale/inversion processing, extracts intensity profiles, estimates signal-to-baseline
+    ratios, and exports saved ROI data.
+  </p>
+  <div class="pills">
+    <span class="pill">GitHub image source</span>
+    <span class="pill">Canvas ROI selection</span>
+    <span class="pill">Grayscale / invert</span>
+    <span class="pill">SBR profile</span>
+    <span class="pill">CSV export</span>
+  </div>
+</section>
+
+<section class="app">
+  <div class="toolbar">
+    <div class="toolbar-title">
+      <div>
+        <h2>Interactive LFA Analysis</h2>
+        <span id="sourceLabel">Source: GitHub repo</span>
+      </div>
+      <div id="status">Loading GitHub image list...</div>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl">
+        <label>Dataset</label>
+        <select id="datasetSelect"></select>
+      </div>
+      <div class="ctrl">
+        <label>Image</label>
+        <select id="imageSelect"></select>
+      </div>
+      <div class="ctrl">
+        <label>ROI label</label>
+        <select id="roiLabel">
+          <option value="K">K / Test</option>
+          <option value="C">C / Control</option>
+          <option value="ROI">ROI</option>
+        </select>
+      </div>
+      <div class="ctrl">
+        <label>Row / sample name</label>
+        <input id="rowName" type="text" value="sample_001" />
+      </div>
+      <div class="ctrl">
+        <label>Load</label>
+        <button class="primary" id="loadImageBtn">Load Image</button>
+      </div>
+      <div class="ctrl">
+        <label>Local fallback</label>
+        <input id="localFile" type="file" accept="image/*,.tif,.tiff" />
+      </div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="canvas-panel">
+      <div class="canvas-wrap">
+        <canvas id="imageCanvas"></canvas>
+      </div>
+    </div>
+
+    <aside class="side-panel">
+      <h3>Image Controls</h3>
+      <div class="button-row">
+        <button class="secondary" id="selectRoiBtn">Select ROI</button>
+        <button class="secondary" id="resetBtn">Reset View</button>
+      </div>
+      <div class="button-row" style="margin-top:8px;">
+        <button class="secondary" id="rotateBtn">Rotate 90°</button>
+        <button class="secondary" id="grayBtn">Grayscale</button>
+        <button class="secondary" id="invertBtn">Invert</button>
+      </div>
+      <div class="button-row" style="margin-top:8px;">
+        <button class="primary" id="saveRoiBtn">Save ROI</button>
+        <button class="secondary" id="downloadRoiBtn">Download ROI PNG</button>
+      </div>
+      <div class="button-row" style="margin-top:8px;">
+        <button class="secondary" id="exportCsvBtn">Export CSV</button>
+        <button class="secondary" id="exportJsonBtn">Export JSON</button>
+        <button class="danger" id="clearBtn">Clear</button>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card"><b>Image</b><span id="imageInfo">None loaded</span></div>
+        <div class="info-card"><b>ROI</b><span id="roiInfo">None selected</span></div>
+        <div class="info-card"><b>Saved ROIs</b><span id="savedInfo">0</span></div>
+        <div class="info-card"><b>SBR</b><span id="sbrInfo">Not computed</span></div>
+      </div>
+
+      <div class="log" id="log"></div>
+    </aside>
+  </div>
+
+  <div class="tabs">
+    <button class="tabbtn active" data-tab="gridPanel">ROI Grid</button>
+    <button class="tabbtn" data-tab="profilePanel">SBR Profile</button>
+    <button class="tabbtn" data-tab="ptPanel">Positive Threshold</button>
+    <button class="tabbtn" data-tab="finalPanel">Final Graph</button>
+    <button class="tabbtn" data-tab="aboutPanel">About</button>
+  </div>
+
+  <div class="analysis-area">
+    <div class="tab-panel active" id="gridPanel">
+      <div class="analysis-panel">
+        <h3>Saved ROI Grid</h3>
+        <p class="notice">Saved regions appear here. They are stored in browser memory/localStorage and can be exported as CSV or JSON.</p>
+        <div class="roi-grid" id="roiGrid"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="profilePanel">
+      <div class="analysis-panel">
+        <h3>SBR Profile</h3>
+        <p class="notice">The profile averages pixel intensity across ROI rows, then compares peak signal to baseline intensity.</p>
+        <div class="button-row" style="margin-bottom:12px; max-width:500px;">
+          <button class="primary" id="plotSbrBtn">Plot Selected ROI</button>
+          <button class="secondary" id="resetLinesBtn">Reset Analysis</button>
+        </div>
+        <div class="chart-box"><canvas id="profileChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="ptPanel">
+      <div class="analysis-panel">
+        <h3>Positive Threshold Summary</h3>
+        <p class="notice">Computes a simple threshold from saved ROI SBR values. This is a browser-side approximation of the notebook analysis workflow.</p>
+        <div class="button-row" style="margin-bottom:12px; max-width:360px;">
+          <button class="primary" id="computePtBtn">Compute PT</button>
+        </div>
+        <div id="ptStats" class="notice"></div>
+        <div class="table-wrap" style="margin-top:12px;"><table id="ptTable"></table></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="finalPanel">
+      <div class="analysis-panel">
+        <h3>Final Experiment Graph</h3>
+        <p class="notice">Groups saved ROIs by label and plots their SBR values. Use this as a lightweight static-site version of the final notebook graph panel.</p>
+        <div class="button-row" style="margin-bottom:12px; max-width:520px;">
+          <button class="primary" id="plotFinalBtn">Plot Final</button>
+          <button class="secondary" id="loadDemoBtn">Load Demo from Current ROIs</button>
+        </div>
+        <div class="chart-box"><canvas id="finalChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="aboutPanel">
+      <div class="analysis-panel">
+        <h3>How this static version works</h3>
+        <p class="notice">
+          The original notebook used Python, Flask, OpenCV, pandas, and Matplotlib routes to load images, crop ROIs,
+          export arrays, build DataFrames, and plot SBR/final graphs. GitHub Pages cannot run that Python backend.
+          This export recreates the user-facing workflow in browser JavaScript so the interface can run as a static website.
+        </p>
+        <p class="notice">
+          Image discovery uses the GitHub Trees API, then loads images from raw.githubusercontent.com. PNG/JPG files load natively;
+          TIF/TIFF files are decoded in the browser with UTIF.js. ROI analysis is performed on canvas pixel data.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="footer-note">
+  GitHub source: <code>timrobinson/UW-LFA-Analysis/100microliters/Database</code>. If GitHub API rate limits occur, refresh later or generate an image manifest.
+</p>
+
+</main>
+
+<script>
+const CONFIG = {
+  owner: "timrobinson",
+  repo: "UW-LFA-Analysis",
+  branch: "main",
+  baseRel: "100microliters/Database",
+  imgExts: [".tif", ".tiff", ".jpg", ".jpeg", ".png"]
+};
+
+const state = {
+  files: [], datasets: {}, currentFile: null, imageBitmap: null, rawCanvas: null,
+  displayCanvas: null, rotation: 0, grayscale: false, inverted: false,
+  selecting: false, roi: null, dragStart: null, saved: [], profileChart: null, finalChart: null
+};
+
+const $ = (id) => document.getElementById(id);
+function log(msg) { const el=$('log'); el.textContent += msg + "
+"; el.scrollTop = el.scrollHeight; }
+function status(msg) { $('status').textContent = msg; }
+function ext(path) { const i=path.lastIndexOf('.'); return i>=0 ? path.slice(i).toLowerCase() : ''; }
+function relDataset(path) {
+  let rel = path.startsWith(CONFIG.baseRel + '/') ? path.slice(CONFIG.baseRel.length + 1) : path;
+  let parts = rel.split('/');
+  if (parts.length <= 1) return 'root';
+  return parts.slice(0, -1).join('/');
+}
+function rawUrl(path) {
+  return `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/${CONFIG.branch}/${path.split('/').map(encodeURIComponent).join('/')}`;
+}
+
+function saveLocalState() {
+  try {
+    const compact = state.saved.map(r => ({...r, imageDataUrl: r.imageDataUrl}));
+    localStorage.setItem('lfa_saved_rois_v1', JSON.stringify(compact));
+  } catch(e) { console.warn(e); }
+}
+function loadLocalState() {
+  try { state.saved = JSON.parse(localStorage.getItem('lfa_saved_rois_v1') || '[]'); } catch(e) { state.saved = []; }
+  refreshSavedUI();
+}
+
+async function fetchGitHubImages() {
+  status('Loading GitHub image list...');
+  const treeUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/git/trees/${CONFIG.branch}?recursive=1`;
+  const res = await fetch(treeUrl);
+  if (!res.ok) throw new Error(`GitHub API failed: ${res.status}`);
+  const data = await res.json();
+  const files = (data.tree || [])
+    .filter(x => x.type === 'blob')
+    .filter(x => x.path.startsWith(CONFIG.baseRel + '/'))
+    .filter(x => CONFIG.imgExts.includes(ext(x.path)));
+  state.files = files;
+  state.datasets = {};
+  for (const f of files) {
+    const ds = relDataset(f.path);
+    if (!state.datasets[ds]) state.datasets[ds] = [];
+    state.datasets[ds].push(f);
+  }
+  populateDatasetSelect();
+  status(`Loaded ${files.length.toLocaleString()} GitHub images`);
+  log(`[GitHub] loaded ${files.length} image files`);
+}
+
+function populateDatasetSelect() {
+  const dsSel = $('datasetSelect');
+  dsSel.innerHTML = '';
+  const names = Object.keys(state.datasets).sort();
+  for (const name of names) {
+    const opt = document.createElement('option'); opt.value = name; opt.textContent = `${name} (${state.datasets[name].length})`; dsSel.appendChild(opt);
+  }
+  populateImageSelect();
+}
+function populateImageSelect() {
+  const ds = $('datasetSelect').value;
+  const imgSel = $('imageSelect');
+  imgSel.innerHTML = '';
+  const files = state.datasets[ds] || [];
+  for (const f of files) {
+    const opt = document.createElement('option'); opt.value = f.path; opt.textContent = f.path.split('/').pop(); imgSel.appendChild(opt);
+  }
+}
+
+async function loadImageFromPath(path) {
+  state.currentFile = path;
+  const url = rawUrl(path);
+  status('Loading image...');
+  log(`[load] ${path}`);
+  const e = ext(path);
+  let canvas;
+  if (e === '.tif' || e === '.tiff') {
+    canvas = await loadTiffToCanvas(url);
+  } else {
+    canvas = await loadNativeImageToCanvas(url);
+  }
+  state.rawCanvas = canvas;
+  state.rotation = 0; state.grayscale = false; state.inverted = false; state.roi = null;
+  renderCanvas();
+  $('imageInfo').textContent = `${path.split('/').pop()} · ${canvas.width}×${canvas.height}`;
+  $('roiInfo').textContent = 'None selected';
+  status('Image loaded');
+}
+
+async function loadNativeImageToCanvas(url) {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  await new Promise((resolve, reject) => { img.onload=resolve; img.onerror=reject; img.src=url; });
+  const canvas = document.createElement('canvas'); canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+  canvas.getContext('2d').drawImage(img,0,0);
+  return canvas;
+}
+async function loadTiffToCanvas(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`TIFF fetch failed: ${res.status}`);
+  const buf = await res.arrayBuffer();
+  const ifds = UTIF.decode(buf); UTIF.decodeImage(buf, ifds[0]);
+  const rgba = UTIF.toRGBA8(ifds[0]);
+  const w = ifds[0].width, h = ifds[0].height;
+  const canvas = document.createElement('canvas'); canvas.width=w; canvas.height=h;
+  const ctx = canvas.getContext('2d');
+  const imgData = new ImageData(new Uint8ClampedArray(rgba), w, h);
+  ctx.putImageData(imgData,0,0);
+  return canvas;
+}
+
+function renderCanvas() {
+  if (!state.rawCanvas) return;
+  let src = state.rawCanvas;
+  let tmp = document.createElement('canvas');
+  let angle = ((state.rotation % 360)+360)%360;
+  if (angle === 90 || angle === 270) { tmp.width = src.height; tmp.height = src.width; } else { tmp.width = src.width; tmp.height = src.height; }
+  let ctx = tmp.getContext('2d');
+  ctx.save();
+  if (angle === 90) { ctx.translate(tmp.width,0); ctx.rotate(Math.PI/2); }
+  else if (angle === 180) { ctx.translate(tmp.width,tmp.height); ctx.rotate(Math.PI); }
+  else if (angle === 270) { ctx.translate(0,tmp.height); ctx.rotate(3*Math.PI/2); }
+  ctx.drawImage(src,0,0); ctx.restore();
+  if (state.grayscale || state.inverted) { applyPixelFilters(tmp, state.grayscale, state.inverted); }
+  state.displayCanvas = tmp;
+  const canvas = $('imageCanvas'); canvas.width = tmp.width; canvas.height = tmp.height;
+  const dctx = canvas.getContext('2d'); dctx.clearRect(0,0,canvas.width,canvas.height); dctx.drawImage(tmp,0,0);
+  drawRoiOverlay();
+}
+function applyPixelFilters(canvas, gray, invert) {
+  const ctx = canvas.getContext('2d');
+  const id = ctx.getImageData(0,0,canvas.width,canvas.height);
+  const d = id.data;
+  for (let i=0;i<d.length;i+=4) {
+    let r=d[i], g=d[i+1], b=d[i+2];
+    if (gray) { const y = Math.round(0.299*r + 0.587*g + 0.114*b); r=g=b=y; }
+    if (invert) { r=255-r; g=255-g; b=255-b; }
+    d[i]=r; d[i+1]=g; d[i+2]=b;
+  }
+  ctx.putImageData(id,0,0);
+}
+function drawRoiOverlay() {
+  const canvas = $('imageCanvas'); const ctx = canvas.getContext('2d');
+  if (!state.roi) return;
+  const r = normalizeRect(state.roi);
+  ctx.save(); ctx.strokeStyle='#7ec850'; ctx.lineWidth=Math.max(2, canvas.width/600); ctx.setLineDash([8,5]);
+  ctx.strokeRect(r.x,r.y,r.w,r.h);
+  ctx.fillStyle='rgba(126,200,80,.12)'; ctx.fillRect(r.x,r.y,r.w,r.h); ctx.restore();
+}
+function canvasPoint(evt) {
+  const canvas = $('imageCanvas'); const rect = canvas.getBoundingClientRect();
+  return { x:(evt.clientX-rect.left)*canvas.width/rect.width, y:(evt.clientY-rect.top)*canvas.height/rect.height };
+}
+function normalizeRect(r) {
+  const x = Math.min(r.x, r.x+r.w), y=Math.min(r.y, r.y+r.h);
+  const w = Math.abs(r.w), h=Math.abs(r.h); return {x,y,w,h};
+}
+function cropCurrentRoiCanvas() {
+  if (!state.displayCanvas || !state.roi) return null;
+  const r = normalizeRect(state.roi);
+  const x = Math.max(0, Math.floor(r.x)), y=Math.max(0, Math.floor(r.y));
+  const w = Math.min(state.displayCanvas.width-x, Math.floor(r.w));
+  const h = Math.min(state.displayCanvas.height-y, Math.floor(r.h));
+  if (w < 2 || h < 2) return null;
+  const out = document.createElement('canvas'); out.width=w; out.height=h;
+  out.getContext('2d').drawImage(state.displayCanvas, x,y,w,h, 0,0,w,h);
+  return out;
+}
+
+function saveRoi() {
+  const crop = cropCurrentRoiCanvas();
+  if (!crop) { log('[save] no ROI selected'); return; }
+  const profile = computeProfile(crop);
+  const sbr = computeSBR(profile);
+  const label = $('roiLabel').value;
+  const row = $('rowName').value || `sample_${state.saved.length+1}`;
+  const rec = {
+    id: Date.now(), row, label,
+    source: state.currentFile || 'local_upload',
+    width: crop.width, height: crop.height,
+    roi: normalizeRect(state.roi),
+    sbr: sbr.sbr, baseline: sbr.baseline, peak: sbr.peak,
+    profile,
+    imageDataUrl: crop.toDataURL('image/png')
+  };
+  state.saved.push(rec); saveLocalState(); refreshSavedUI();
+  $('sbrInfo').textContent = isFinite(rec.sbr) ? rec.sbr.toFixed(3) : 'n/a';
+  log(`[save] ${label} ${row} · SBR=${rec.sbr.toFixed(3)}`);
+}
+function computeProfile(canvas) {
+  const ctx = canvas.getContext('2d'); const id = ctx.getImageData(0,0,canvas.width,canvas.height); const d=id.data;
+  const vals = [];
+  for (let x=0; x<canvas.width; x++) {
+    let sum=0;
+    for (let y=0; y<canvas.height; y++) {
+      const i=(y*canvas.width+x)*4; sum += (d[i]+d[i+1]+d[i+2])/3;
+    }
+    vals.push(sum/canvas.height);
+  }
+  return vals;
+}
+function computeSBR(profile) {
+  if (!profile || !profile.length) return {sbr:NaN, baseline:NaN, peak:NaN};
+  const n=profile.length;
+  const edge = Math.max(3, Math.floor(n*.15));
+  const baseVals = profile.slice(0,edge).concat(profile.slice(n-edge));
+  const baseline = baseVals.reduce((a,b)=>a+b,0)/baseVals.length;
+  const peak = Math.max(...profile);
+  const sbr = baseline > 0 ? peak / baseline : NaN;
+  return {sbr, baseline, peak};
+}
+function refreshSavedUI() {
+  $('savedInfo').textContent = String(state.saved.length);
+  const grid = $('roiGrid'); grid.innerHTML='';
+  for (const rec of state.saved) {
+    const div=document.createElement('div'); div.className='roi-card';
+    div.innerHTML = `<img src="${rec.imageDataUrl}"><small><b>${rec.label}</b> · ${rec.row}<br>SBR ${Number(rec.sbr).toFixed(3)}<br>${rec.width}×${rec.height}</small>`;
+    div.onclick = () => plotProfile(rec);
+    grid.appendChild(div);
+  }
+}
+function latestRoi() { return state.saved[state.saved.length-1] || null; }
+
+function plotProfile(rec=latestRoi()) {
+  if (!rec) { log('[profile] no saved ROI'); return; }
+  const ctx = $('profileChart').getContext('2d');
+  if (state.profileChart) state.profileChart.destroy();
+  state.profileChart = new Chart(ctx, {
+    type:'line',
+    data:{ labels:rec.profile.map((_,i)=>i), datasets:[{ label:`${rec.label} ${rec.row} profile`, data:rec.profile, borderWidth:2, pointRadius:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{labels:{color:'#eee'}}}, scales:{x:{ticks:{color:'#aaa'}},y:{ticks:{color:'#aaa'}}} }
+  });
+  $('sbrInfo').textContent = Number(rec.sbr).toFixed(3);
+}
+function computePT() {
+  const rows = state.saved.filter(r => Number.isFinite(r.sbr));
+  if (!rows.length) { $('ptStats').textContent='No saved SBR values yet.'; return; }
+  const vals = rows.map(r=>r.sbr); const mu=vals.reduce((a,b)=>a+b,0)/vals.length;
+  const sd=Math.sqrt(vals.map(v=>(v-mu)**2).reduce((a,b)=>a+b,0)/Math.max(1,vals.length-1));
+  const thr=mu+2*sd;
+  $('ptStats').innerHTML = `Mean SBR: <b>${mu.toFixed(3)}</b> · SD: <b>${sd.toFixed(3)}</b> · threshold: <b>${thr.toFixed(3)}</b>`;
+  const table=$('ptTable');
+  table.innerHTML='<thead><tr><th>Row</th><th>Label</th><th>SBR</th><th>Call</th><th>Source</th></tr></thead><tbody>'+
+    rows.map(r=>`<tr><td>${r.row}</td><td>${r.label}</td><td>${r.sbr.toFixed(3)}</td><td>${r.sbr>=thr?'Positive-like':'Below threshold'}</td><td>${r.source.split('/').pop()}</td></tr>`).join('')+'</tbody>';
+}
+function plotFinal() {
+  const rows = state.saved.filter(r => Number.isFinite(r.sbr));
+  const ctx=$('finalChart').getContext('2d'); if (state.finalChart) state.finalChart.destroy();
+  state.finalChart = new Chart(ctx, {
+    type:'bar',
+    data:{ labels:rows.map(r=>`${r.label}:${r.row}`), datasets:[{label:'SBR', data:rows.map(r=>r.sbr), borderWidth:1}] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{labels:{color:'#eee'}}}, scales:{x:{ticks:{color:'#aaa', maxRotation:80, minRotation:30}},y:{ticks:{color:'#aaa'}}} }
+  });
+}
+
+function download(name, text, mime='text/plain') {
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:mime})); a.download=name; a.click(); URL.revokeObjectURL(a.href);
+}
+function exportCSV() {
+  const header=['id','row','label','source','width','height','x','y','w','h','sbr','baseline','peak'];
+  const lines=[header.join(',')];
+  for (const r of state.saved) {
+    lines.push([r.id,r.row,r.label,r.source,r.width,r.height,r.roi.x,r.roi.y,r.roi.w,r.roi.h,r.sbr,r.baseline,r.peak].map(v=>`"${String(v).replaceAll('"','""')}"`).join(','));
+  }
+  download('lfa_roi_export.csv', lines.join('
+'), 'text/csv');
+}
+function exportJSON() { download('lfa_roi_export.json', JSON.stringify(state.saved,null,2), 'application/json'); }
+function downloadRoiPNG() {
+  const crop=cropCurrentRoiCanvas(); if (!crop) { log('[download] no ROI'); return; }
+  const a=document.createElement('a'); a.href=crop.toDataURL('image/png'); a.download='lfa_roi.png'; a.click();
+}
+
+$('datasetSelect').onchange=populateImageSelect;
+$('loadImageBtn').onclick=()=>loadImageFromPath($('imageSelect').value).catch(e=>{console.error(e); status('Load failed'); log('[error] '+e.message);});
+$('localFile').onchange=async (e)=>{
+  const file=e.target.files[0]; if (!file) return;
+  const url=URL.createObjectURL(file);
+  let canvas = (file.name.toLowerCase().endsWith('.tif')||file.name.toLowerCase().endsWith('.tiff')) ? await loadTiffToCanvas(url) : await loadNativeImageToCanvas(url);
+  URL.revokeObjectURL(url); state.currentFile=file.name; state.rawCanvas=canvas; state.roi=null; renderCanvas(); $('imageInfo').textContent=`${file.name} · ${canvas.width}×${canvas.height}`; status('Local image loaded');
+};
+$('selectRoiBtn').onclick=()=>{ state.selecting=true; log('[roi] drag on image to select ROI'); };
+$('resetBtn').onclick=()=>{ state.rotation=0; state.grayscale=false; state.inverted=false; state.roi=null; renderCanvas(); $('roiInfo').textContent='None selected'; };
+$('rotateBtn').onclick=()=>{ state.rotation=(state.rotation+90)%360; renderCanvas(); };
+$('grayBtn').onclick=()=>{ state.grayscale=!state.grayscale; renderCanvas(); };
+$('invertBtn').onclick=()=>{ state.inverted=!state.inverted; renderCanvas(); };
+$('saveRoiBtn').onclick=saveRoi;
+$('downloadRoiBtn').onclick=downloadRoiPNG;
+$('exportCsvBtn').onclick=exportCSV;
+$('exportJsonBtn').onclick=exportJSON;
+$('clearBtn').onclick=()=>{ if(confirm('Clear saved ROIs in this browser?')) { state.saved=[]; saveLocalState(); refreshSavedUI(); } };
+$('plotSbrBtn').onclick=()=>plotProfile();
+$('resetLinesBtn').onclick=()=>{ if(state.profileChart) state.profileChart.destroy(); state.profileChart=null; $('sbrInfo').textContent='Not computed'; };
+$('computePtBtn').onclick=computePT;
+$('plotFinalBtn').onclick=plotFinal;
+$('loadDemoBtn').onclick=()=>{ plotFinal(); computePT(); };
+
+$('imageCanvas').addEventListener('mousedown', e=>{ if(!state.displayCanvas) return; state.selecting=true; state.dragStart=canvasPoint(e); state.roi={x:state.dragStart.x,y:state.dragStart.y,w:0,h:0}; });
+window.addEventListener('mousemove', e=>{ if(!state.selecting || !state.dragStart) return; const p=canvasPoint(e); state.roi={x:state.dragStart.x,y:state.dragStart.y,w:p.x-state.dragStart.x,h:p.y-state.dragStart.y}; renderCanvas(); });
+window.addEventListener('mouseup', e=>{ if(!state.selecting) return; state.selecting=false; state.dragStart=null; if(state.roi) { const r=normalizeRect(state.roi); $('roiInfo').textContent=`x=${Math.round(r.x)}, y=${Math.round(r.y)}, w=${Math.round(r.w)}, h=${Math.round(r.h)}`; log(`[roi] ${$('roiInfo').textContent}`); } });
+
+document.querySelectorAll('.tabbtn').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active'); $(btn.dataset.tab).classList.add('active');
+  };
+});
+
+loadLocalState();
+fetchGitHubImages().then(()=>{
+  const firstDs=$('datasetSelect').value; const firstFile=($('imageSelect').value||'');
+  if(firstFile) loadImageFromPath(firstFile).catch(e=>log('[auto-load skipped] '+e.message));
+}).catch(e=>{ console.error(e); status('Could not load GitHub image list'); log('[GitHub error] '+e.message); });
+</script>
+</body>
+</html>
