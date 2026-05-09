@@ -96,6 +96,7 @@ a{ color:inherit; }
   padding:36px;
   box-shadow:0 10px 40px rgba(0,0,0,.28);
   max-width:1200px;
+  margin-bottom:50px;
 }
 
 .project-tag{
@@ -333,6 +334,62 @@ a{ color:inherit; }
   <div class="caption">
     Static GitHub Pages export of the Morel Compass prediction system.
     Current visualization focused on Washington State.
+  </div>
+
+</section>
+
+<section class="project-card">
+
+  <div class="project-tag">
+    Earlier Research Interface
+  </div>
+
+  <h2>
+    Lateral Flow Assay Image Analysis GUI
+  </h2>
+
+  <p>
+    A browser-based image analysis interface for lateral flow assay strip
+    processing, developed from a University of Washington BCME Lab workflow.
+    The interface supports image loading directly from GitHub-hosted datasets,
+    ROI selection, grayscale normalization, image rotation, and signal profile
+    analysis for test and control regions.
+  </p>
+
+  <p>
+    This interface is based on a larger Python/OpenCV workflow originally
+    developed in Jupyter notebooks for assay standardization and downstream
+    signal-to-baseline analysis. The GitHub Pages version preserves the same
+    overall interface structure and workflow directly in the browser.
+  </p>
+
+  <div class="project-links">
+
+    <a class="project-button primary" href="lfa-analysis.html">
+      Open Full Interface →
+    </a>
+
+    <a class="project-button secondary"
+       href="https://github.com/Tecknique/UW-LFA-Analysis"
+       target="_blank">
+      GitHub
+    </a>
+
+  </div>
+
+  <div class="map-shell">
+
+    <iframe
+      class="project-frame"
+      src="lfa-analysis.html"
+      loading="lazy"
+      title="LFA Analysis Interface">
+    </iframe>
+
+  </div>
+
+  <div class="caption">
+    Browser-based standalone version of the UW LFA image analysis workflow.
   </div>
 
 </section>
